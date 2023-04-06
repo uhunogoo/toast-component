@@ -9,6 +9,7 @@ import {
 
 import VisuallyHidden from '../VisuallyHidden';
 
+import { ToastContext } from '../ToastProvider'
 import styles from './Toast.module.css';
 
 const ICONS_BY_VARIANT = {
@@ -18,18 +19,28 @@ const ICONS_BY_VARIANT = {
   error: AlertOctagon,
 };
 
-function Toast() {
+function Toast({ id, variant, children }) {
+  const { handleDissmis } = React.useContext( ToastContext );
+  
+  const toastClass = `${styles.toast} ${styles[variant]}`
+  const Icon = ICONS_BY_VARIANT[variant];
+  
   return (
-    <div className={`${styles.toast} ${styles.notice}`}>
+    <div className={ toastClass }>
       <div className={styles.iconContainer}>
-        <Info size={24} />
+        <Icon size={24} />
       </div>
       <p className={styles.content}>
-        16 photos have been uploaded
+        <VisuallyHidden>{ variant } -</VisuallyHidden>
+        { children }
       </p>
-      <button className={styles.closeButton}>
+      <button 
+        onClick={() => handleDissmis(id)}
+        className={styles.closeButton}
+        aria-label="Dismiss message"
+        aria-live="off"
+      >
         <X size={24} />
-        <VisuallyHidden>Dismiss message</VisuallyHidden>
       </button>
     </div>
   );
